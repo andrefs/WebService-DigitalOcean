@@ -1,0 +1,36 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Test::Mock::LWP::Dispatch;
+use JSON;
+use Data::Dump qw/dump/;
+use Test::More tests => 1;
+
+my $api_key		= 'fake_api_key';
+my $client_id	= 'fake_client_id';
+
+my $ua = LWP::UserAgent->new;
+$ua->map(
+	"https://api.digitalocean.com/droplets/?client_id=$client_id&api_key=$api_key",
+	HTTP::Response->new(200, 'OK', HTTP::Headers->new('Content-Type' => "application/json; charset=utf-8" ),
+		qq/{"status":"OK","droplets":[{"backups_active":null,"id":100823,"image_id":420,"name":"test222","region_id":1,"size_id":33,"status":"active"}]}/
+	)
+);
+
+use WebService::DigitalOcean;
+my $do = WebService::DigitalOcean->new(client_id => $client_id, api_key => $api_key, _ua => $ua);
+
+is_deeply($do->do_request(api_action => 'droplets'),{
+  droplets => [
+                {
+                  backups_active => undef,
+                  id => 100823,
+                  image_id => 420,
+                  name => "test222",
+                  region_id => 1,
+                  size_id => 33,
+                  status => "active",
+                },
+              ],
+  status   => "OK",
+}, $do->_apiurl.'droplets'); 

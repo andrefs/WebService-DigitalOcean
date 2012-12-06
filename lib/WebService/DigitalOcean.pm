@@ -1,4 +1,4 @@
-package WebService::DigitalOcean;
+package WebService::DigitalOcean 0.001;
 use Moo;
 extends 'WebService::DigitalOcean::Base';
 use Data::Dump qw/dump/;
@@ -140,8 +140,6 @@ has name			=> ( is => 'rw', required => 1 );
 has region_id		=> ( is => 'rw', required => 1 );
 has size_id			=> ( is => 'rw', required => 1 );
 has status			=> ( is => 'rw', required => 1 );
-
-
 
 package WebService::DigitalOcean::Region;
 use Moo;

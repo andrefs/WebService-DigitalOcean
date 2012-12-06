@@ -4,10 +4,14 @@ use LWP::UserAgent;
 use JSON;
 use Try::Tiny;
 use feature qw/say/;
+use Moose::Util::TypeConstraints;
+
+class_type 'Test::MockObject';
+class_type 'LWP::UserAgent';
 
 has '_ua' 	=> (
 	is 			=> 'ro',
-	isa 		=> 'LWP::UserAgent',
+	isa 		=> 'LWP::UserAgent|Test::MockObject',
 	required	=> 1,
 	default		=>	sub { my $self = shift; LWP::UserAgent->new(agent => ref($self).'/'.$self->VERSION) }, 
 );
