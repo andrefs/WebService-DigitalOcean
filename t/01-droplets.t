@@ -3,7 +3,6 @@ use strict;
 use warnings;
 use Test::Mock::LWP::Dispatch;
 use JSON;
-use Data::Dump qw/dump/;
 use Test::More tests => 1;
 
 my $api_key		= 'fake_api_key';

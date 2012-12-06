@@ -44,7 +44,15 @@ has _apiurl	=> (
 sub do_request {
 	my ($self,%args) = @_;
 	my $response = $self->send_request(%args);
-	return $self->parse_response($response);
+	my $result;
+	try {
+		$result = $self->parse_response($response);
+	}
+	catch {
+		my $error_msg = $_->{code}.': '.$_->{message};
+		$error_msg.= "\n".$_->{content} if $_->{code} == 200;
+		die $error_msg;
+	}
 }
 
 sub send_request {
@@ -64,11 +72,13 @@ sub parse_response {
 		my $json = from_json($response->content);
 		my $status = $json->{status};
 		if ($status =~ /error/i){
+			die { code => $response->code, message => $response->message, content => $response->content };
 		} else {
 			return $json;
 		}
 	}
 	else {
+		die { code => $response->code, message => $response->message, content => $response->content };
 	}
 	return;
 }
